@@ -52,6 +52,19 @@ overhead_mnist_model.eval()
 
 
 def get_prediction(img_arr):
+    """
+    ---------
+    Arguments
+    ---------
+    img_arr: ndarray
+        a numpy array of the image
+
+    -------
+    Returns
+    -------
+    pred_label_str : str
+        a string representing the label of the prediction
+    """
     img_arr = np.expand_dims(np.expand_dims(img_arr, 0), 0)
     img_arr = img_arr.astype(np.float32) / 255.0
     img_tensor = torch.tensor(img_arr).float()
@@ -80,6 +93,19 @@ def get_app_info():
 
 @app.post("/predict")
 def _file_upload(image_file: UploadFile = File(...)):
+    """
+    ---------
+    Arguments
+    ---------
+    image_file: object
+        an object of type UploadFile
+
+    -------
+    Returns
+    -------
+    response_json : dict
+        a dict as a response json for the post request
+    """
     logging.info(image_file)
     img_str = image_file.file.read()
     img_decoded = cv2.imdecode(np.frombuffer(img_str, np.uint8), 0)
