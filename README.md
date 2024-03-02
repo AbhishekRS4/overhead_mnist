@@ -42,6 +42,12 @@ docker run -p 7860:7860 -t fastapi_overhead_mnist
 
 ## Sample test images
 ![Sample test image 1](sample_test_images/68162.jpg?raw=true)
-![Sample test image 2](sample_test_images/76675.jpg?raw=true)
-![Sample test image 3](sample_test_images/68164.jpg?raw=true)
-![Sample test image 4](sample_test_images/76679.jpg?raw=true)
+![Sample test image 2](sample_test_images/68164.jpg?raw=true)
+![Sample test image 3](sample_test_images/68166.jpg?raw=true)
+![Sample test image 4](sample_test_images/68172.jpg?raw=true)
+![Sample test image 5](sample_test_images/68186.jpg?raw=true)
+![Sample test image 6](sample_test_images/76675.jpg?raw=true)
+![Sample test image 7](sample_test_images/76679.jpg?raw=true)
+![Sample test image 8](sample_test_images/76680.jpg?raw=true)
+![Sample test image 9](sample_test_images/76685.jpg?raw=true)
+![Sample test image 10](sample_test_images/76686.jpg?raw=true)
