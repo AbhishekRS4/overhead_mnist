@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>modeling package &mdash; Overhead-MNIST  documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=b3ba4146"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="test_post_request module" href="test_post_request.html" />
+    <link rel="prev" title="config module" href="config.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Overhead-MNIST
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">overhead_mnist</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="app.html">app module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="config.html">config module</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">modeling package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-modeling.dataset">modeling.dataset module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#modeling.dataset.OverheadMNISTDataset"><code class="docutils literal notranslate"><span class="pre">OverheadMNISTDataset</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#modeling.dataset.get_dataloader_for_testing"><code class="docutils literal notranslate"><span class="pre">get_dataloader_for_testing()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#modeling.dataset.get_dataloaders_for_training"><code class="docutils literal notranslate"><span class="pre">get_dataloaders_for_training()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#modeling.dataset.split_dataset"><code class="docutils literal notranslate"><span class="pre">split_dataset()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-modeling.gen_label_mapping_json">modeling.gen_label_mapping_json module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#modeling.gen_label_mapping_json.gen_label_mapping_json"><code class="docutils literal notranslate"><span class="pre">gen_label_mapping_json()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#modeling.gen_label_mapping_json.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-modeling.models">modeling.models module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#modeling.models.ResidualBlock"><code class="docutils literal notranslate"><span class="pre">ResidualBlock</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#modeling.models.SimpleCNN"><code class="docutils literal notranslate"><span class="pre">SimpleCNN</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#modeling.models.SimpleResNet"><code class="docutils literal notranslate"><span class="pre">SimpleResNet</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-modeling.test">modeling.test module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#modeling.test.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#modeling.test.test_classifier"><code class="docutils literal notranslate"><span class="pre">test_classifier()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-modeling.train">modeling.train module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#modeling.train.PolynomialLR"><code class="docutils literal notranslate"><span class="pre">PolynomialLR</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#modeling.train.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#modeling.train.train"><code class="docutils literal notranslate"><span class="pre">train()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#modeling.train.train_classifier"><code class="docutils literal notranslate"><span class="pre">train_classifier()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#modeling.train.validate"><code class="docutils literal notranslate"><span class="pre">validate()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-modeling.visualize_img_augmentations">modeling.visualize_img_augmentations module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#modeling.visualize_img_augmentations.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#modeling.visualize_img_augmentations.visualize_augmentations"><code class="docutils literal notranslate"><span class="pre">visualize_augmentations()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-modeling">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="test_post_request.html">test_post_request module</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Overhead-MNIST</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="modules.html">overhead_mnist</a></li>
+      <li class="breadcrumb-item active">modeling package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/modeling.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="modeling-package">
+<h1>modeling package<a class="headerlink" href="#modeling-package" title="Permalink to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading"></a></h2>
+</section>
+<section id="module-modeling.dataset">
+<span id="modeling-dataset-module"></span><h2>modeling.dataset module<a class="headerlink" href="#module-modeling.dataset" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="modeling.dataset.OverheadMNISTDataset">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">modeling.dataset.</span></span><span class="sig-name descname"><span class="pre">OverheadMNISTDataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image_ids</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dir_images</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_train_set</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modeling/dataset.html#OverheadMNISTDataset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#modeling.dataset.OverheadMNISTDataset" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Dataset</span></code></p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="modeling.dataset.get_dataloader_for_testing">
+<span class="sig-prename descclassname"><span class="pre">modeling.dataset.</span></span><span class="sig-name descname"><span class="pre">get_dataloader_for_testing</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">test_x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dir_images</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modeling/dataset.html#get_dataloader_for_testing"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#modeling.dataset.get_dataloader_for_testing" title="Permalink to this definition"></a></dt>
+<dd><section id="arguments">
+<h3>Arguments<a class="headerlink" href="#arguments" title="Permalink to this heading"></a></h3>
+<dl class="simple">
+<dt>test_x: list</dt><dd><p>a list of test image files</p>
+</dd>
+<dt>test_y: list</dt><dd><p>a list of labels corresponding to test image files</p>
+</dd>
+<dt>dir_images: str</dt><dd><p>full path to directory containing the images</p>
+</dd>
+<dt>batch_size: int</dt><dd><p>batch size to be used for testing (default: 1)</p>
+</dd>
+</dl>
+</section>
+<section id="returns">
+<h3>Returns<a class="headerlink" href="#returns" title="Permalink to this heading"></a></h3>
+<dl class="simple">
+<dt>test_loader: object</dt><dd><p>an object for test dataset loader</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="modeling.dataset.get_dataloaders_for_training">
+<span class="sig-prename descclassname"><span class="pre">modeling.dataset.</span></span><span class="sig-name descname"><span class="pre">get_dataloaders_for_training</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">train_x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">train_y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">validation_x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">validation_y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dir_images</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">64</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modeling/dataset.html#get_dataloaders_for_training"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#modeling.dataset.get_dataloaders_for_training" title="Permalink to this definition"></a></dt>
+<dd><section id="id1">
+<h3>Arguments<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h3>
+<dl class="simple">
+<dt>train_x: list</dt><dd><p>a list of train image files</p>
+</dd>
+<dt>train_y: list</dt><dd><p>a list of labels corresponding to train image files</p>
+</dd>
+<dt>validation_x: list</dt><dd><p>a list of validation image files</p>
+</dd>
+<dt>validation_y: list</dt><dd><p>a list of labels corresponding to validation image files</p>
+</dd>
+<dt>dir_images: str</dt><dd><p>full path to directory containing the images</p>
+</dd>
+<dt>batch_size: int</dt><dd><p>batch size to be used for training and validation (default: 64)</p>
+</dd>
+</dl>
+</section>
+<section id="id2">
+<h3>Returns<a class="headerlink" href="#id2" title="Permalink to this heading"></a></h3>
+<dl class="simple">
+<dt>(train_loader, validation_loader)<span class="classifier">tuple</span></dt><dd><p>a tuple of objects for training and validation dataset loaders</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="modeling.dataset.split_dataset">
+<span class="sig-prename descclassname"><span class="pre">modeling.dataset.</span></span><span class="sig-name descname"><span class="pre">split_dataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">train_x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">train_y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">random_state</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modeling/dataset.html#split_dataset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#modeling.dataset.split_dataset" title="Permalink to this definition"></a></dt>
+<dd><section id="id3">
+<h3>Arguments<a class="headerlink" href="#id3" title="Permalink to this heading"></a></h3>
+<dl class="simple">
+<dt>train_x: list</dt><dd><p>a list of train image files</p>
+</dd>
+<dt>train_y: list</dt><dd><p>a list of labels corresponding to train image files</p>
+</dd>
+<dt>random_state: int</dt><dd><p>random state to be used for split (default: 4)</p>
+</dd>
+</dl>
+</section>
+<section id="id4">
+<h3>Returns<a class="headerlink" href="#id4" title="Permalink to this heading"></a></h3>
+<dl class="simple">
+<dt>(train_x, validation_x, train_y, validation_y)<span class="classifier">n-tuple</span></dt><dd><p>a n-tuple of training and validation image files and their corresponding labels</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+</section>
+<section id="module-modeling.gen_label_mapping_json">
+<span id="modeling-gen-label-mapping-json-module"></span><h2>modeling.gen_label_mapping_json module<a class="headerlink" href="#module-modeling.gen_label_mapping_json" title="Permalink to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="modeling.gen_label_mapping_json.gen_label_mapping_json">
+<span class="sig-prename descclassname"><span class="pre">modeling.gen_label_mapping_json.</span></span><span class="sig-name descname"><span class="pre">gen_label_mapping_json</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ARGS</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modeling/gen_label_mapping_json.html#gen_label_mapping_json"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#modeling.gen_label_mapping_json.gen_label_mapping_json" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="modeling.gen_label_mapping_json.main">
+<span class="sig-prename descclassname"><span class="pre">modeling.gen_label_mapping_json.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/modeling/gen_label_mapping_json.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#modeling.gen_label_mapping_json.main" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="module-modeling.models">
+<span id="modeling-models-module"></span><h2>modeling.models module<a class="headerlink" href="#module-modeling.models" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="modeling.models.ResidualBlock">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">modeling.models.</span></span><span class="sig-name descname"><span class="pre">ResidualBlock</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">in_channels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_channels</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modeling/models.html#ResidualBlock"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#modeling.models.ResidualBlock" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="modeling.models.ResidualBlock.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modeling/models.html#ResidualBlock.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#modeling.models.ResidualBlock.forward" title="Permalink to this definition"></a></dt>
+<dd><p>Defines the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="modeling.models.ResidualBlock.training">
+<span class="sig-name descname"><span class="pre">training</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#modeling.models.ResidualBlock.training" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="modeling.models.SimpleCNN">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">modeling.models.</span></span><span class="sig-name descname"><span class="pre">SimpleCNN</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num_classes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modeling/models.html#SimpleCNN"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#modeling.models.SimpleCNN" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="modeling.models.SimpleCNN.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modeling/models.html#SimpleCNN.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#modeling.models.SimpleCNN.forward" title="Permalink to this definition"></a></dt>
+<dd><p>Defines the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="modeling.models.SimpleCNN.training">
+<span class="sig-name descname"><span class="pre">training</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#modeling.models.SimpleCNN.training" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="modeling.models.SimpleResNet">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">modeling.models.</span></span><span class="sig-name descname"><span class="pre">SimpleResNet</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num_classes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">list_num_res_units_per_block</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[3,</span> <span class="pre">3]</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modeling/models.html#SimpleResNet"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#modeling.models.SimpleResNet" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="modeling.models.SimpleResNet.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modeling/models.html#SimpleResNet.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#modeling.models.SimpleResNet.forward" title="Permalink to this definition"></a></dt>
+<dd><p>Defines the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="modeling.models.SimpleResNet.training">
+<span class="sig-name descname"><span class="pre">training</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#modeling.models.SimpleResNet.training" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-modeling.test">
+<span id="modeling-test-module"></span><h2>modeling.test module<a class="headerlink" href="#module-modeling.test" title="Permalink to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="modeling.test.main">
+<span class="sig-prename descclassname"><span class="pre">modeling.test.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/modeling/test.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#modeling.test.main" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="modeling.test.test_classifier">
+<span class="sig-prename descclassname"><span class="pre">modeling.test.</span></span><span class="sig-name descname"><span class="pre">test_classifier</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ARGS</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modeling/test.html#test_classifier"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#modeling.test.test_classifier" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="module-modeling.train">
+<span id="modeling-train-module"></span><h2>modeling.train module<a class="headerlink" href="#module-modeling.train" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="modeling.train.PolynomialLR">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">modeling.train.</span></span><span class="sig-name descname"><span class="pre">PolynomialLR</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">optimizer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_epochs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">power</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.9</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">last_epoch</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_lr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-06</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modeling/train.html#PolynomialLR"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#modeling.train.PolynomialLR" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">_LRScheduler</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="modeling.train.PolynomialLR.get_lr">
+<span class="sig-name descname"><span class="pre">get_lr</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/modeling/train.html#PolynomialLR.get_lr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#modeling.train.PolynomialLR.get_lr" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="modeling.train.main">
+<span class="sig-prename descclassname"><span class="pre">modeling.train.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/modeling/train.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#modeling.train.main" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="modeling.train.train">
+<span class="sig-prename descclassname"><span class="pre">modeling.train.</span></span><span class="sig-name descname"><span class="pre">train</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optimizer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">criterion</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">train_loader</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modeling/train.html#train"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#modeling.train.train" title="Permalink to this definition"></a></dt>
+<dd><section id="id5">
+<h3>Arguments<a class="headerlink" href="#id5" title="Permalink to this heading"></a></h3>
+<dl class="simple">
+<dt>model: object</dt><dd><p>an object of type torch model</p>
+</dd>
+<dt>optimizer: object</dt><dd><p>an object of type torch Optimizer</p>
+</dd>
+<dt>criterion: object</dt><dd><p>an object of type torch criterion function</p>
+</dd>
+<dt>train_loader: object</dt><dd><p>an object of type torch dataloader</p>
+</dd>
+<dt>device: object</dt><dd><p>an object of type torch device</p>
+</dd>
+</dl>
+</section>
+<section id="id6">
+<h3>Returns<a class="headerlink" href="#id6" title="Permalink to this heading"></a></h3>
+<dl class="simple">
+<dt>(train_loss, train_acc)<span class="classifier">tuple</span></dt><dd><p>a tuple of training loss and training accuracy</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="modeling.train.train_classifier">
+<span class="sig-prename descclassname"><span class="pre">modeling.train.</span></span><span class="sig-name descname"><span class="pre">train_classifier</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ARGS</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modeling/train.html#train_classifier"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#modeling.train.train_classifier" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="modeling.train.validate">
+<span class="sig-prename descclassname"><span class="pre">modeling.train.</span></span><span class="sig-name descname"><span class="pre">validate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">criterion</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">validation_loader</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modeling/train.html#validate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#modeling.train.validate" title="Permalink to this definition"></a></dt>
+<dd><section id="id7">
+<h3>Arguments<a class="headerlink" href="#id7" title="Permalink to this heading"></a></h3>
+<dl class="simple">
+<dt>model: object</dt><dd><p>an object of type torch model</p>
+</dd>
+<dt>criterion: object</dt><dd><p>an object of type torch criterion function</p>
+</dd>
+<dt>validation_loader: object</dt><dd><p>an object of type torch dataloader</p>
+</dd>
+<dt>device: object</dt><dd><p>an object of type torch device</p>
+</dd>
+</dl>
+</section>
+<section id="id8">
+<h3>Returns<a class="headerlink" href="#id8" title="Permalink to this heading"></a></h3>
+<dl class="simple">
+<dt>(validation_loss, validation_acc)<span class="classifier">tuple</span></dt><dd><p>a tuple of validation loss and validation accuracy</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+</section>
+<section id="module-modeling.visualize_img_augmentations">
+<span id="modeling-visualize-img-augmentations-module"></span><h2>modeling.visualize_img_augmentations module<a class="headerlink" href="#module-modeling.visualize_img_augmentations" title="Permalink to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="modeling.visualize_img_augmentations.main">
+<span class="sig-prename descclassname"><span class="pre">modeling.visualize_img_augmentations.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/modeling/visualize_img_augmentations.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#modeling.visualize_img_augmentations.main" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="modeling.visualize_img_augmentations.visualize_augmentations">
+<span class="sig-prename descclassname"><span class="pre">modeling.visualize_img_augmentations.</span></span><span class="sig-name descname"><span class="pre">visualize_augmentations</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/modeling/visualize_img_augmentations.html#visualize_augmentations"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#modeling.visualize_img_augmentations.visualize_augmentations" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="module-modeling">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-modeling" title="Permalink to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="config.html" class="btn btn-neutral float-left" title="config module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="test_post_request.html" class="btn btn-neutral float-right" title="test_post_request module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, AbhishekRS4.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
