@@ -38,3 +38,10 @@ docker run -p 7860:7860 -t fastapi_overhead_mnist
 
 ## Docs
 * The docs generated with sphinx can be found in [_build/html/index.html](_build/html/index.html)
+
+
+## Sample test images
+![Sample test image 1](sample_test_images/68162.jpg?raw=true)
+![Sample test image 2](sample_test_images/76675.jpg?raw=true)
+![Sample test image 3](sample_test_images/68164.jpg?raw=true)
+![Sample test image 4](sample_test_images/76679.jpg?raw=true)
