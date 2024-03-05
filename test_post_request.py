@@ -1,10 +1,12 @@
 import os
+import logging
 import argparse
 import requests
 import numpy as np
 
 
-def send_image_post_request(ARGS):
+def send_image_post_request(ARGS: argparse.Namespace) -> None:
+    logging.basicConfig(level=logging.INFO)
     list_test_images = os.listdir(ARGS.dir_test_images)
 
     for file_image in list_test_images:
@@ -16,11 +18,11 @@ def send_image_post_request(ARGS):
             files=files,
         )
 
-        print(response.json())
+        logging.info(response.json())
     return
 
 
-def main():
+def main() -> None:
     dir_test_images = "./sample_test_images/"
     parser = argparse.ArgumentParser(
         formatter_class=argparse.ArgumentDefaultsHelpFormatter
