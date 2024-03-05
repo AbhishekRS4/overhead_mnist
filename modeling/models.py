@@ -6,8 +6,9 @@ import torch.nn.functional as F
 
 from typing import List
 
+
 class SimpleCNN(nn.Module):
-    def __init__(self, num_classes: int=10):
+    def __init__(self, num_classes: int = 10):
         """
         ---------
         Arguments
@@ -119,7 +120,9 @@ class ResidualBlock(nn.Module):
 
 
 class SimpleResNet(nn.Module):
-    def __init__(self, num_classes: int=10, list_num_res_units_per_block: List=[3, 3]):
+    def __init__(
+        self, num_classes: int = 10, list_num_res_units_per_block: List = [3, 3]
+    ):
         """
         ---------
         Arguments
@@ -230,7 +233,9 @@ class SimpleResNet(nn.Module):
 
 
 class ComplexResNet(nn.Module):
-    def __init__(self, num_classes: int=10, list_num_res_units_per_block: List=[4, 4, 4]):
+    def __init__(
+        self, num_classes: int = 10, list_num_res_units_per_block: List = [4, 4, 4]
+    ):
         """
         ---------
         Arguments
@@ -359,7 +364,7 @@ class ComplexResNet(nn.Module):
                 nn.init.constant_(m.bias, 0)
         return
 
-    def forward(self, x:torch.Tensor) -> torch.Tensor:
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
         x = self.conv_block_1(x)
         x = self.residual_block_1(x)
         x = self.conv_block_2(x)
