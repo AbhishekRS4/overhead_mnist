@@ -9,9 +9,10 @@ import torchvision.transforms as transforms
 from torch.utils.data import Dataset, DataLoader
 from sklearn.model_selection import train_test_split
 
+from typing import List, Tuple
 
 class OverheadMNISTDataset(Dataset):
-    def __init__(self, image_ids, labels, dir_images, is_train_set=True):
+    def __init__(self, image_ids: List, labels: List, dir_images: str, is_train_set: bool=True):
         """
         ---------
         Arguments
@@ -59,10 +60,10 @@ class OverheadMNISTDataset(Dataset):
                 ]
             )
 
-    def __len__(self):
+    def __len__(self) -> int:
         return len(self.image_ids)
 
-    def __getitem__(self, idx):
+    def __getitem__(self, idx) -> Tuple[torch.Tensor, int]:
         file_image = os.path.join(self.dir_images, self.image_ids[idx])
         image = imread(file_image)
         image = self.transform(image)
@@ -70,7 +71,7 @@ class OverheadMNISTDataset(Dataset):
         return image, label
 
 
-def split_dataset(train_x, train_y, random_state=4):
+def split_dataset(train_x: List, train_y: List, random_state: int=4) -> Tuple[List, List, List, List]:
     """
     ---------
     Arguments
@@ -95,8 +96,8 @@ def split_dataset(train_x, train_y, random_state=4):
 
 
 def get_dataloaders_for_training(
-    train_x, train_y, validation_x, validation_y, dir_images, batch_size=64
-):
+    train_x: List, train_y: List, validation_x: List, validation_y: List, dir_images: str, batch_size: int=64
+) -> Tuple[DataLoader, DataLoader]:
     """
     ---------
     Arguments
@@ -142,7 +143,7 @@ def get_dataloaders_for_training(
     return train_loader, validation_loader
 
 
-def get_dataloader_for_testing(test_x, test_y, dir_images, batch_size=1):
+def get_dataloader_for_testing(test_x: List, test_y: List, dir_images: str, batch_size: int=1) -> DataLoader:
     """
     ---------
     Arguments
