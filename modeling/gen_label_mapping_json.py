@@ -5,6 +5,7 @@ import argparse
 
 
 def gen_label_mapping_json(ARGS: argparse.Namespace) -> None:
+    logging.basicConfig(level=logging.INFO)
     file_json = "label_mapping.json"
     list_labels = sorted(os.listdir(ARGS.dir_train))
     num_labels = len(list_labels)

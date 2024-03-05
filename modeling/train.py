@@ -146,6 +146,7 @@ def validate(
 
 
 def train_classifier(ARGS: argparse.Namespace) -> None:
+    logging.basicConfig(level=logging.INFO)
     wandb.login()
     if torch.cuda.is_available():
         device = torch.device("cuda")
