@@ -3,24 +3,36 @@ import sys
 import time
 import torch
 import wandb
+import logging
 import argparse
 import torchvision
-import torch.nn as nn
 import torch.nn.functional as F
+
+from torch.optim import SGD, AdamW
+from typing import Union, List, Tuple
+from torch.nn import CrossEntropyLoss
+from torch.utils.data import DataLoader
 from torch.optim.lr_scheduler import _LRScheduler
 
-from models import SimpleCNN, SimpleResNet
+from models import SimpleCNN, SimpleResNet, ComplexResNet
 from dataset import split_dataset, get_dataloaders_for_training
 
 
 class PolynomialLR(_LRScheduler):
-    def __init__(self, optimizer, max_epochs, power=0.9, last_epoch=-1, min_lr=1e-6):
+    def __init__(
+        self,
+        optimizer: Union[SGD, AdamW],
+        max_epochs: int,
+        power: float = 0.9,
+        last_epoch: int = -1,
+        min_lr: float = 1e-6,
+    ):
         self.power = power
         self.max_epochs = max_epochs
         self.min_lr = min_lr  # avoid zero lr
         super(PolynomialLR, self).__init__(optimizer, last_epoch)
 
-    def get_lr(self):
+    def get_lr(self) -> float:
         return [
             max(
                 base_lr * (1 - self.last_epoch / self.max_epochs) ** self.power,
@@ -30,7 +42,13 @@ class PolynomialLR(_LRScheduler):
         ]
 
 
-def train(model, optimizer, criterion, train_loader, device):
+def train(
+    model: Union[SimpleCNN, SimpleResNet, ComplexResNet],
+    optimizer: Union[SGD, AdamW],
+    criterion: CrossEntropyLoss,
+    train_loader: DataLoader,
+    device: torch.device,
+) -> Tuple[float, float]:
     """
     ---------
     Arguments
@@ -77,7 +95,12 @@ def train(model, optimizer, criterion, train_loader, device):
     return train_loss, train_acc
 
 
-def validate(model, criterion, validation_loader, device):
+def validate(
+    model: Union[SimpleCNN, SimpleResNet, ComplexResNet],
+    criterion: CrossEntropyLoss,
+    validation_loader: DataLoader,
+    device: torch.device,
+) -> Tuple[float, float]:
     """
     ---------
     Arguments
@@ -114,7 +137,7 @@ def validate(model, criterion, validation_loader, device):
 
             validation_running_loss += loss.item()
             pred_label = torch.argmax(logits, dim=1)
-            # print(logits, pred_label, label)
+            # logging.info(logits, pred_label, label)
             validation_running_correct += (pred_label == label).sum().item()
 
         validation_loss = validation_running_loss / num_validation_batches
@@ -122,15 +145,15 @@ def validate(model, criterion, validation_loader, device):
     return validation_loss, validation_acc
 
 
-def train_classifier(ARGS):
+def train_classifier(ARGS: argparse.Namespace) -> None:
     wandb.login()
     if torch.cuda.is_available():
         device = torch.device("cuda")
     else:
-        print("CUDA device not found, so exiting....")
+        logging.info("CUDA device not found, so exiting....")
         sys.exit(0)
 
-    print("Training a CNN model for the Overhead MNIST dataset")
+    logging.info("Training a CNN model for the Overhead MNIST dataset")
     train_x = []
     train_y = []
     dir_train = os.path.join(ARGS.dir_dataset, "train")
@@ -165,28 +188,32 @@ def train_classifier(ARGS):
 
     dir_model = os.path.join(ARGS.dir_model, ARGS.model_type)
     if not os.path.isdir(dir_model):
-        print(f"Creating directory: {dir_model}")
+        logging.info(f"Creating directory: {dir_model}")
         os.makedirs(dir_model)
 
-    print(
+    logging.info(
         f"Num train samples: {num_train_samples}, num validation samples: {num_validation_samples}"
     )
-    print(f"Num classes: {num_classes}, model_type: {ARGS.model_type}")
+    logging.info(f"Num classes: {num_classes}, model_type: {ARGS.model_type}")
 
     if ARGS.model_type == "simple_cnn":
         model = SimpleCNN(num_classes=num_classes)
     elif ARGS.model_type == "simple_resnet":
         model = SimpleResNet(num_classes=num_classes)
-    elif ARGS.model_type == "medium_resnet":
+    elif ARGS.model_type == "medium_simple_resnet":
         model = SimpleResNet(
             list_num_res_units_per_block=[4, 4], num_classes=num_classes
         )
-    elif ARGS.model_type == "deep_resnet":
+    elif ARGS.model_type == "deep_simple_resnet":
         model = SimpleResNet(
             list_num_res_units_per_block=[6, 6], num_classes=num_classes
         )
+    elif ARGS.model_type == "complex_resnet":
+        model = ComplexResNet(
+            list_num_res_units_per_block=[4, 4, 4], num_classes=num_classes
+        )
     else:
-        print(f"Unidentified option for arg (model_type): {ARGS.model_type}")
+        logging.info(f"Unidentified option for arg (model_type): {ARGS.model_type}")
     model.to(device)
 
     if ARGS.optimizer_type == "sgd":
@@ -208,11 +235,12 @@ def train_classifier(ARGS):
             power=0.75,
         )
 
-    criterion = torch.nn.CrossEntropyLoss()
+    criterion = CrossEntropyLoss()
 
     config = {
         "dataset": "Overhead-MNIST",
         "architecture": "CNN",
+        "model_type": ARGS.model_type,
         "optimizer": ARGS.optimizer_type,
         "lr_scheduler": ARGS.lr_scheduler_type,
         "learning_rate": ARGS.learning_rate,
@@ -222,7 +250,7 @@ def train_classifier(ARGS):
     }
     best_validation_acc = 0
 
-    print(
+    logging.info(
         f"Training the Overhead MNIST image classification model started, model_type: {ARGS.model_type}"
     )
     with wandb.init(project="overhead-mnist-model", config=config):
@@ -235,11 +263,13 @@ def train_classifier(ARGS):
                 model, criterion, validation_loader, device
             )
             time_end = time.time()
-            print(
+            logging.info(
                 f"Epoch: {epoch}/{ARGS.num_epochs}, time: {time_end-time_start:.4f} sec."
             )
-            print(f"Train Loss: {train_loss:.4f}, Train Accuracy: {train_acc:.4f}")
-            print(
+            logging.info(
+                f"Train Loss: {train_loss:.4f}, Train Accuracy: {train_acc:.4f}"
+            )
+            logging.info(
                 f"Validation Loss: {validation_loss:.4f}, Validation Accuracy: {validation_acc:.4f}\n"
             )
             wandb.log(
@@ -260,11 +290,11 @@ def train_classifier(ARGS):
                 wandb.save(os.path.join(dir_model, f"{ARGS.model_type}.pt"))
             if ARGS.lr_scheduler_type == "poly":
                 lr_scheduler.step()
-    print("Training the Overhead MNIST image classification model complete!!!!")
+    logging.info("Training the Overhead MNIST image classification model complete!!!!")
     return
 
 
-def main():
+def main() -> None:
     learning_rate = 1e-3
     weight_decay = 5e-6
     batch_size = 64
@@ -272,7 +302,7 @@ def main():
     model_type = "simple_cnn"
     dir_dataset = "/home/abhishek/Desktop/datasets/overhead_mnist/version2"
     dir_model = "trained_models"
-    lr_scheduler_type = "none"
+    lr_scheduler_type = "poly"
     optimizer_type = "adam"
 
     parser = argparse.ArgumentParser(
@@ -319,7 +349,13 @@ def main():
         "--model_type",
         default=model_type,
         type=str,
-        choices=["simple_cnn", "simple_resnet", "medium_resnet", "deep_resnet"],
+        choices=[
+            "simple_cnn",
+            "simple_resnet",
+            "medium_simple_resnet",
+            "deep_simple_resnet",
+            "complex_resnet",
+        ],
         help="model type to be trained",
     )
     parser.add_argument(

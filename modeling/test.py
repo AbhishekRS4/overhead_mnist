@@ -2,6 +2,7 @@ import os
 import sys
 import time
 import torch
+import logging
 import argparse
 
 import numpy as np
@@ -9,11 +10,12 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 from train import validate
-from models import SimpleCNN, SimpleResNet
 from dataset import get_dataloader_for_testing
+from models import SimpleCNN, SimpleResNet, ComplexResNet
 
 
-def test_classifier(ARGS):
+def test_classifier(ARGS: argparse.Namespace) -> None:
+    logging.basicConfig(level=logging.INFO)
     if torch.cuda.is_available():
         device = torch.device("cuda")
     else:
@@ -41,33 +43,37 @@ def test_classifier(ARGS):
         model = SimpleCNN(num_classes=num_classes)
     elif ARGS.model_type == "simple_resnet":
         model = SimpleResNet(num_classes=num_classes)
-    elif ARGS.model_type == "medium_resnet":
+    elif ARGS.model_type == "medium_simple_resnet":
         model = SimpleResNet(
             list_num_res_units_per_block=[4, 4], num_classes=num_classes
         )
-    elif ARGS.model_type == "deep_resnet":
+    elif ARGS.model_type == "deep_simple_resnet":
         model = SimpleResNet(
             list_num_res_units_per_block=[6, 6], num_classes=num_classes
         )
+    elif ARGS.model_type == "complex_resnet":
+        model = ComplexResNet(
+            list_num_res_units_per_block=[4, 4, 4], num_classes=num_classes
+        )
     else:
-        print(f"Unidentified option for arg (model_type): {ARGS.model_type}")
+        logging.info(f"Unidentified option for arg (model_type): {ARGS.model_type}")
     model.load_state_dict(torch.load(ARGS.file_model, map_location=device))
     model.to(device)
 
     criterion = torch.nn.CrossEntropyLoss()
 
     num_test_files = len(test_x)
-    print(f"Num test files: {num_test_files}")
-    print(
+    logging.info(f"Num test files: {num_test_files}")
+    logging.info(
         f"Testing the Overhead MNIST image classification model started, model_type: {ARGS.model_type}"
     )
     _, test_acc = validate(model, criterion, test_loader, device)
-    print(f"Test Accuracy: {test_acc:.4f}\n")
-    print("Testing the Overhead MNIST image classification model complete!!!!")
+    logging.info(f"Test Accuracy: {test_acc:.4f}\n")
+    logging.info("Testing the Overhead MNIST image classification model complete!!!!")
     return
 
 
-def main():
+def main() -> None:
     model_type = "simple_cnn"
     dir_test_set = "/home/abhishek/Desktop/datasets/overhead_mnist/version2/test/"
     file_model = "simple_cnn.pt"
@@ -92,7 +98,13 @@ def main():
         "--model_type",
         default=model_type,
         type=str,
-        choices=["simple_cnn", "simple_resnet", "medium_resnet", "deep_resnet"],
+        choices=[
+            "simple_cnn",
+            "simple_resnet",
+            "medium_simple_resnet",
+            "deep_simple_resnet",
+            "complex_resnet",
+        ],
         help="model type to be tested and evaluated",
     )
 
