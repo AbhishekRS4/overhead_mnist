@@ -51,7 +51,7 @@ overhead_mnist_model.to(device)
 overhead_mnist_model.eval()
 
 
-def get_prediction(img_arr):
+def get_prediction(img_arr: np.ndarray) -> str:
     """
     ---------
     Arguments
@@ -79,7 +79,7 @@ def get_prediction(img_arr):
 
 
 @app.get("/info")
-def get_app_info():
+def get_app_info() -> dict:
     """
     -------
     Returns
@@ -92,7 +92,7 @@ def get_app_info():
 
 
 @app.post("/predict")
-def _file_upload(image_file: UploadFile = File(...)):
+def _file_upload(image_file: UploadFile = File(...)) -> dict:
     """
     ---------
     Arguments
