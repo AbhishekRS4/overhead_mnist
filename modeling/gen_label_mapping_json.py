@@ -1,9 +1,10 @@
 import os
 import json
+import logging
 import argparse
 
 
-def gen_label_mapping_json(ARGS):
+def gen_label_mapping_json(ARGS: argparse.Namespace) -> None:
     file_json = "label_mapping.json"
     list_labels = sorted(os.listdir(ARGS.dir_train))
     num_labels = len(list_labels)
@@ -12,11 +13,11 @@ def gen_label_mapping_json(ARGS):
         dict_label_mapping[lbl_idx] = list_labels[lbl_idx]
     with open(file_json, "w", encoding="utf-8") as file_des:
         json.dump(dict_label_mapping, file_des, ensure_ascii=False, indent=4)
-    print(f"Label mapping is saved to {file_json}")
+    logging.info(f"Label mapping is saved to {file_json}")
     return
 
 
-def main():
+def main() -> None:
     dir_train = "/home/abhishek/Desktop/datasets/overhead_mnist/version2/train"
     parser = argparse.ArgumentParser(
         formatter_class=argparse.ArgumentDefaultsHelpFormatter
