@@ -14,8 +14,8 @@ from torch.nn import CrossEntropyLoss
 from torch.utils.data import DataLoader
 from torch.optim.lr_scheduler import _LRScheduler
 
-from models import SimpleCNN, SimpleResNet, ComplexResNet
 from dataset import split_dataset, get_dataloaders_for_training
+from models import SimpleCNN, SimpleResNet, ComplexResNet, ComplexResNetV2
 
 
 class PolynomialLR(_LRScheduler):
@@ -43,7 +43,7 @@ class PolynomialLR(_LRScheduler):
 
 
 def train(
-    model: Union[SimpleCNN, SimpleResNet, ComplexResNet],
+    model: Union[SimpleCNN, SimpleResNet, ComplexResNet, ComplexResNetV2],
     optimizer: Union[SGD, AdamW],
     criterion: CrossEntropyLoss,
     train_loader: DataLoader,
@@ -96,7 +96,7 @@ def train(
 
 
 def validate(
-    model: Union[SimpleCNN, SimpleResNet, ComplexResNet],
+    model: Union[SimpleCNN, SimpleResNet, ComplexResNet, ComplexResNetV2],
     criterion: CrossEntropyLoss,
     validation_loader: DataLoader,
     device: torch.device,
@@ -211,6 +211,10 @@ def train_classifier(ARGS: argparse.Namespace) -> None:
         )
     elif ARGS.model_type == "complex_resnet":
         model = ComplexResNet(
+            list_num_res_units_per_block=[4, 4, 4], num_classes=num_classes
+        )
+    elif ARGS.model_type == "complex_resnet_v2":
+        model = ComplexResNetV2(
             list_num_res_units_per_block=[4, 4, 4], num_classes=num_classes
         )
     else:
@@ -356,6 +360,7 @@ def main() -> None:
             "medium_simple_resnet",
             "deep_simple_resnet",
             "complex_resnet",
+            "complex_resnet_v2",
         ],
         help="model type to be trained",
     )
