@@ -11,7 +11,7 @@ import torch.nn.functional as F
 
 from train import validate
 from dataset import get_dataloader_for_testing
-from models import SimpleCNN, SimpleResNet, ComplexResNet
+from models import SimpleCNN, SimpleResNet, ComplexResNet, ComplexResNetV2
 
 
 def test_classifier(ARGS: argparse.Namespace) -> None:
@@ -53,6 +53,10 @@ def test_classifier(ARGS: argparse.Namespace) -> None:
         )
     elif ARGS.model_type == "complex_resnet":
         model = ComplexResNet(
+            list_num_res_units_per_block=[4, 4, 4], num_classes=num_classes
+        )
+    elif ARGS.model_type == "complex_resnet_v2":
+        model = ComplexResNetV2(
             list_num_res_units_per_block=[4, 4, 4], num_classes=num_classes
         )
     else:
@@ -104,6 +108,7 @@ def main() -> None:
             "medium_simple_resnet",
             "deep_simple_resnet",
             "complex_resnet",
+            "complex_resnet_v2",
         ],
         help="model type to be tested and evaluated",
     )
