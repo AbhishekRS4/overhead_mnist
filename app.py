@@ -6,7 +6,7 @@ import numpy as np
 from fastapi import FastAPI, File, UploadFile, Form
 
 from config import settings
-from modeling.models import SimpleCNN, SimpleResNet
+from modeling.models import SimpleCNN, SimpleResNet, ComplexResNet, ComplexResNetV2
 
 app = FastAPI()
 logging.basicConfig(level=logging.INFO)
@@ -28,13 +28,21 @@ if model_type == "simple_cnn":
     overhead_mnist_model = SimpleCNN(num_classes=num_classes)
 elif model_type == "simple_resnet":
     overhead_mnist_model = SimpleResNet(num_classes=num_classes)
-elif model_type == "medium_resnet":
+elif model_type == "medium_simple_resnet":
     overhead_mnist_model = SimpleResNet(
         list_num_res_units_per_block=[4, 4], num_classes=num_classes
     )
-elif model_type == "deep_resnet":
+elif model_type == "deep_simple_resnet":
     overhead_mnist_model = SimpleResNet(
         list_num_res_units_per_block=[6, 6], num_classes=num_classes
+    )
+elif model_type == "complex_resnet":
+    overhead_mnist_model = ComplexResNet(
+        list_num_res_units_per_block=[4, 4, 4], num_classes=num_classes
+    )
+elif model_type == "complex_resnet_v2":
+    overhead_mnist_model = ComplexResNetV2(
+        list_num_res_units_per_block=[4, 4, 4], num_classes=num_classes
     )
 
 try:
