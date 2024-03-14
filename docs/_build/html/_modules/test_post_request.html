@@ -72,12 +72,14 @@
              
   <h1>Source code for test_post_request</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">import</span> <span class="nn">argparse</span>
 <span class="kn">import</span> <span class="nn">requests</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
 
-<div class="viewcode-block" id="send_image_post_request"><a class="viewcode-back" href="../test_post_request.html#test_post_request.send_image_post_request">[docs]</a><span class="k">def</span> <span class="nf">send_image_post_request</span><span class="p">(</span><span class="n">ARGS</span><span class="p">):</span>
+<div class="viewcode-block" id="send_image_post_request"><a class="viewcode-back" href="../test_post_request.html#test_post_request.send_image_post_request">[docs]</a><span class="k">def</span> <span class="nf">send_image_post_request</span><span class="p">(</span><span class="n">ARGS</span><span class="p">:</span> <span class="n">argparse</span><span class="o">.</span><span class="n">Namespace</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
     <span class="n">list_test_images</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">ARGS</span><span class="o">.</span><span class="n">dir_test_images</span><span class="p">)</span>
 
     <span class="k">for</span> <span class="n">file_image</span> <span class="ow">in</span> <span class="n">list_test_images</span><span class="p">:</span>
@@ -89,11 +91,11 @@
             <span class="n">files</span><span class="o">=</span><span class="n">files</span><span class="p">,</span>
         <span class="p">)</span>
 
-        <span class="nb">print</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">())</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">())</span>
     <span class="k">return</span></div>
 
 
-<div class="viewcode-block" id="main"><a class="viewcode-back" href="../test_post_request.html#test_post_request.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+<div class="viewcode-block" id="main"><a class="viewcode-back" href="../test_post_request.html#test_post_request.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="n">dir_test_images</span> <span class="o">=</span> <span class="s2">&quot;./sample_test_images/&quot;</span>
     <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span>
         <span class="n">formatter_class</span><span class="o">=</span><span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentDefaultsHelpFormatter</span>

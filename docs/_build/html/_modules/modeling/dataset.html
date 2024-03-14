@@ -82,9 +82,13 @@
 <span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">Dataset</span><span class="p">,</span> <span class="n">DataLoader</span>
 <span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">train_test_split</span>
 
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span>
+
 
 <div class="viewcode-block" id="OverheadMNISTDataset"><a class="viewcode-back" href="../../modeling.html#modeling.dataset.OverheadMNISTDataset">[docs]</a><span class="k">class</span> <span class="nc">OverheadMNISTDataset</span><span class="p">(</span><span class="n">Dataset</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">image_ids</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">dir_images</span><span class="p">,</span> <span class="n">is_train_set</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">image_ids</span><span class="p">:</span> <span class="n">List</span><span class="p">,</span> <span class="n">labels</span><span class="p">:</span> <span class="n">List</span><span class="p">,</span> <span class="n">dir_images</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">is_train_set</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        ---------</span>
 <span class="sd">        Arguments</span>
@@ -132,10 +136,10 @@
                 <span class="p">]</span>
             <span class="p">)</span>
 
-    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
         <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">image_ids</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
         <span class="n">file_image</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dir_images</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">image_ids</span><span class="p">[</span><span class="n">idx</span><span class="p">])</span>
         <span class="n">image</span> <span class="o">=</span> <span class="n">imread</span><span class="p">(</span><span class="n">file_image</span><span class="p">)</span>
         <span class="n">image</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
@@ -143,7 +147,9 @@
         <span class="k">return</span> <span class="n">image</span><span class="p">,</span> <span class="n">label</span></div>
 
 
-<div class="viewcode-block" id="split_dataset"><a class="viewcode-back" href="../../modeling.html#modeling.dataset.split_dataset">[docs]</a><span class="k">def</span> <span class="nf">split_dataset</span><span class="p">(</span><span class="n">train_x</span><span class="p">,</span> <span class="n">train_y</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">4</span><span class="p">):</span>
+<div class="viewcode-block" id="split_dataset"><a class="viewcode-back" href="../../modeling.html#modeling.dataset.split_dataset">[docs]</a><span class="k">def</span> <span class="nf">split_dataset</span><span class="p">(</span>
+    <span class="n">train_x</span><span class="p">:</span> <span class="n">List</span><span class="p">,</span> <span class="n">train_y</span><span class="p">:</span> <span class="n">List</span><span class="p">,</span> <span class="n">random_state</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">List</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">List</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    ---------</span>
 <span class="sd">    Arguments</span>
@@ -168,8 +174,13 @@
 
 
 <div class="viewcode-block" id="get_dataloaders_for_training"><a class="viewcode-back" href="../../modeling.html#modeling.dataset.get_dataloaders_for_training">[docs]</a><span class="k">def</span> <span class="nf">get_dataloaders_for_training</span><span class="p">(</span>
-    <span class="n">train_x</span><span class="p">,</span> <span class="n">train_y</span><span class="p">,</span> <span class="n">validation_x</span><span class="p">,</span> <span class="n">validation_y</span><span class="p">,</span> <span class="n">dir_images</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">64</span>
-<span class="p">):</span>
+    <span class="n">train_x</span><span class="p">:</span> <span class="n">List</span><span class="p">,</span>
+    <span class="n">train_y</span><span class="p">:</span> <span class="n">List</span><span class="p">,</span>
+    <span class="n">validation_x</span><span class="p">:</span> <span class="n">List</span><span class="p">,</span>
+    <span class="n">validation_y</span><span class="p">:</span> <span class="n">List</span><span class="p">,</span>
+    <span class="n">dir_images</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">64</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">DataLoader</span><span class="p">,</span> <span class="n">DataLoader</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    ---------</span>
 <span class="sd">    Arguments</span>
@@ -215,7 +226,9 @@
     <span class="k">return</span> <span class="n">train_loader</span><span class="p">,</span> <span class="n">validation_loader</span></div>
 
 
-<div class="viewcode-block" id="get_dataloader_for_testing"><a class="viewcode-back" href="../../modeling.html#modeling.dataset.get_dataloader_for_testing">[docs]</a><span class="k">def</span> <span class="nf">get_dataloader_for_testing</span><span class="p">(</span><span class="n">test_x</span><span class="p">,</span> <span class="n">test_y</span><span class="p">,</span> <span class="n">dir_images</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+<div class="viewcode-block" id="get_dataloader_for_testing"><a class="viewcode-back" href="../../modeling.html#modeling.dataset.get_dataloader_for_testing">[docs]</a><span class="k">def</span> <span class="nf">get_dataloader_for_testing</span><span class="p">(</span>
+    <span class="n">test_x</span><span class="p">:</span> <span class="n">List</span><span class="p">,</span> <span class="n">test_y</span><span class="p">:</span> <span class="n">List</span><span class="p">,</span> <span class="n">dir_images</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DataLoader</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    ---------</span>
 <span class="sd">    Arguments</span>

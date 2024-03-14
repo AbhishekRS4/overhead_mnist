@@ -76,24 +76,36 @@
 <span class="kn">import</span> <span class="nn">time</span>
 <span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">import</span> <span class="nn">wandb</span>
+<span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">import</span> <span class="nn">argparse</span>
 <span class="kn">import</span> <span class="nn">torchvision</span>
-<span class="kn">import</span> <span class="nn">torch.nn</span> <span class="k">as</span> <span class="nn">nn</span>
 <span class="kn">import</span> <span class="nn">torch.nn.functional</span> <span class="k">as</span> <span class="nn">F</span>
+
+<span class="kn">from</span> <span class="nn">torch.optim</span> <span class="kn">import</span> <span class="n">SGD</span><span class="p">,</span> <span class="n">AdamW</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span>
+<span class="kn">from</span> <span class="nn">torch.nn</span> <span class="kn">import</span> <span class="n">CrossEntropyLoss</span>
+<span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DataLoader</span>
 <span class="kn">from</span> <span class="nn">torch.optim.lr_scheduler</span> <span class="kn">import</span> <span class="n">_LRScheduler</span>
 
-<span class="kn">from</span> <span class="nn">models</span> <span class="kn">import</span> <span class="n">SimpleCNN</span><span class="p">,</span> <span class="n">SimpleResNet</span>
 <span class="kn">from</span> <span class="nn">dataset</span> <span class="kn">import</span> <span class="n">split_dataset</span><span class="p">,</span> <span class="n">get_dataloaders_for_training</span>
+<span class="kn">from</span> <span class="nn">models</span> <span class="kn">import</span> <span class="n">SimpleCNN</span><span class="p">,</span> <span class="n">SimpleResNet</span><span class="p">,</span> <span class="n">ComplexResNet</span><span class="p">,</span> <span class="n">ComplexResNetV2</span>
 
 
 <div class="viewcode-block" id="PolynomialLR"><a class="viewcode-back" href="../../modeling.html#modeling.train.PolynomialLR">[docs]</a><span class="k">class</span> <span class="nc">PolynomialLR</span><span class="p">(</span><span class="n">_LRScheduler</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">,</span> <span class="n">max_epochs</span><span class="p">,</span> <span class="n">power</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span> <span class="n">last_epoch</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">min_lr</span><span class="o">=</span><span class="mf">1e-6</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">optimizer</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">SGD</span><span class="p">,</span> <span class="n">AdamW</span><span class="p">],</span>
+        <span class="n">max_epochs</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">power</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.9</span><span class="p">,</span>
+        <span class="n">last_epoch</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">min_lr</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-6</span><span class="p">,</span>
+    <span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">power</span> <span class="o">=</span> <span class="n">power</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">max_epochs</span> <span class="o">=</span> <span class="n">max_epochs</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">min_lr</span> <span class="o">=</span> <span class="n">min_lr</span>  <span class="c1"># avoid zero lr</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">PolynomialLR</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">optimizer</span><span class="p">,</span> <span class="n">last_epoch</span><span class="p">)</span>
 
-<div class="viewcode-block" id="PolynomialLR.get_lr"><a class="viewcode-back" href="../../modeling.html#modeling.train.PolynomialLR.get_lr">[docs]</a>    <span class="k">def</span> <span class="nf">get_lr</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="PolynomialLR.get_lr"><a class="viewcode-back" href="../../modeling.html#modeling.train.PolynomialLR.get_lr">[docs]</a>    <span class="k">def</span> <span class="nf">get_lr</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
         <span class="k">return</span> <span class="p">[</span>
             <span class="nb">max</span><span class="p">(</span>
                 <span class="n">base_lr</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_epoch</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_epochs</span><span class="p">)</span> <span class="o">**</span> <span class="bp">self</span><span class="o">.</span><span class="n">power</span><span class="p">,</span>
@@ -103,7 +115,13 @@
         <span class="p">]</span></div></div>
 
 
-<div class="viewcode-block" id="train"><a class="viewcode-back" href="../../modeling.html#modeling.train.train">[docs]</a><span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">,</span> <span class="n">criterion</span><span class="p">,</span> <span class="n">train_loader</span><span class="p">,</span> <span class="n">device</span><span class="p">):</span>
+<div class="viewcode-block" id="train"><a class="viewcode-back" href="../../modeling.html#modeling.train.train">[docs]</a><span class="k">def</span> <span class="nf">train</span><span class="p">(</span>
+    <span class="n">model</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">SimpleCNN</span><span class="p">,</span> <span class="n">SimpleResNet</span><span class="p">,</span> <span class="n">ComplexResNet</span><span class="p">,</span> <span class="n">ComplexResNetV2</span><span class="p">],</span>
+    <span class="n">optimizer</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">SGD</span><span class="p">,</span> <span class="n">AdamW</span><span class="p">],</span>
+    <span class="n">criterion</span><span class="p">:</span> <span class="n">CrossEntropyLoss</span><span class="p">,</span>
+    <span class="n">train_loader</span><span class="p">:</span> <span class="n">DataLoader</span><span class="p">,</span>
+    <span class="n">device</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    ---------</span>
 <span class="sd">    Arguments</span>
@@ -150,7 +168,12 @@
     <span class="k">return</span> <span class="n">train_loss</span><span class="p">,</span> <span class="n">train_acc</span></div>
 
 
-<div class="viewcode-block" id="validate"><a class="viewcode-back" href="../../modeling.html#modeling.train.validate">[docs]</a><span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">criterion</span><span class="p">,</span> <span class="n">validation_loader</span><span class="p">,</span> <span class="n">device</span><span class="p">):</span>
+<div class="viewcode-block" id="validate"><a class="viewcode-back" href="../../modeling.html#modeling.train.validate">[docs]</a><span class="k">def</span> <span class="nf">validate</span><span class="p">(</span>
+    <span class="n">model</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">SimpleCNN</span><span class="p">,</span> <span class="n">SimpleResNet</span><span class="p">,</span> <span class="n">ComplexResNet</span><span class="p">,</span> <span class="n">ComplexResNetV2</span><span class="p">],</span>
+    <span class="n">criterion</span><span class="p">:</span> <span class="n">CrossEntropyLoss</span><span class="p">,</span>
+    <span class="n">validation_loader</span><span class="p">:</span> <span class="n">DataLoader</span><span class="p">,</span>
+    <span class="n">device</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    ---------</span>
 <span class="sd">    Arguments</span>
@@ -187,7 +210,7 @@
 
             <span class="n">validation_running_loss</span> <span class="o">+=</span> <span class="n">loss</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
             <span class="n">pred_label</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">logits</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-            <span class="c1"># print(logits, pred_label, label)</span>
+            <span class="c1"># logging.info(logits, pred_label, label)</span>
             <span class="n">validation_running_correct</span> <span class="o">+=</span> <span class="p">(</span><span class="n">pred_label</span> <span class="o">==</span> <span class="n">label</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
 
         <span class="n">validation_loss</span> <span class="o">=</span> <span class="n">validation_running_loss</span> <span class="o">/</span> <span class="n">num_validation_batches</span>
@@ -195,15 +218,16 @@
     <span class="k">return</span> <span class="n">validation_loss</span><span class="p">,</span> <span class="n">validation_acc</span></div>
 
 
-<div class="viewcode-block" id="train_classifier"><a class="viewcode-back" href="../../modeling.html#modeling.train.train_classifier">[docs]</a><span class="k">def</span> <span class="nf">train_classifier</span><span class="p">(</span><span class="n">ARGS</span><span class="p">):</span>
+<div class="viewcode-block" id="train_classifier"><a class="viewcode-back" href="../../modeling.html#modeling.train.train_classifier">[docs]</a><span class="k">def</span> <span class="nf">train_classifier</span><span class="p">(</span><span class="n">ARGS</span><span class="p">:</span> <span class="n">argparse</span><span class="o">.</span><span class="n">Namespace</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
     <span class="n">wandb</span><span class="o">.</span><span class="n">login</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">():</span>
         <span class="n">device</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="s2">&quot;cuda&quot;</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;CUDA device not found, so exiting....&quot;</span><span class="p">)</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;CUDA device not found, so exiting....&quot;</span><span class="p">)</span>
         <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
 
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Training a CNN model for the Overhead MNIST dataset&quot;</span><span class="p">)</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Training a CNN model for the Overhead MNIST dataset&quot;</span><span class="p">)</span>
     <span class="n">train_x</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">train_y</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">dir_train</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ARGS</span><span class="o">.</span><span class="n">dir_dataset</span><span class="p">,</span> <span class="s2">&quot;train&quot;</span><span class="p">)</span>
@@ -238,28 +262,36 @@
 
     <span class="n">dir_model</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ARGS</span><span class="o">.</span><span class="n">dir_model</span><span class="p">,</span> <span class="n">ARGS</span><span class="o">.</span><span class="n">model_type</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">dir_model</span><span class="p">):</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Creating directory: </span><span class="si">{</span><span class="n">dir_model</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Creating directory: </span><span class="si">{</span><span class="n">dir_model</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">dir_model</span><span class="p">)</span>
 
-    <span class="nb">print</span><span class="p">(</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
         <span class="sa">f</span><span class="s2">&quot;Num train samples: </span><span class="si">{</span><span class="n">num_train_samples</span><span class="si">}</span><span class="s2">, num validation samples: </span><span class="si">{</span><span class="n">num_validation_samples</span><span class="si">}</span><span class="s2">&quot;</span>
     <span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Num classes: </span><span class="si">{</span><span class="n">num_classes</span><span class="si">}</span><span class="s2">, model_type: </span><span class="si">{</span><span class="n">ARGS</span><span class="o">.</span><span class="n">model_type</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Num classes: </span><span class="si">{</span><span class="n">num_classes</span><span class="si">}</span><span class="s2">, model_type: </span><span class="si">{</span><span class="n">ARGS</span><span class="o">.</span><span class="n">model_type</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">ARGS</span><span class="o">.</span><span class="n">model_type</span> <span class="o">==</span> <span class="s2">&quot;simple_cnn&quot;</span><span class="p">:</span>
         <span class="n">model</span> <span class="o">=</span> <span class="n">SimpleCNN</span><span class="p">(</span><span class="n">num_classes</span><span class="o">=</span><span class="n">num_classes</span><span class="p">)</span>
     <span class="k">elif</span> <span class="n">ARGS</span><span class="o">.</span><span class="n">model_type</span> <span class="o">==</span> <span class="s2">&quot;simple_resnet&quot;</span><span class="p">:</span>
         <span class="n">model</span> <span class="o">=</span> <span class="n">SimpleResNet</span><span class="p">(</span><span class="n">num_classes</span><span class="o">=</span><span class="n">num_classes</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="n">ARGS</span><span class="o">.</span><span class="n">model_type</span> <span class="o">==</span> <span class="s2">&quot;medium_resnet&quot;</span><span class="p">:</span>
+    <span class="k">elif</span> <span class="n">ARGS</span><span class="o">.</span><span class="n">model_type</span> <span class="o">==</span> <span class="s2">&quot;medium_simple_resnet&quot;</span><span class="p">:</span>
         <span class="n">model</span> <span class="o">=</span> <span class="n">SimpleResNet</span><span class="p">(</span>
             <span class="n">list_num_res_units_per_block</span><span class="o">=</span><span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span> <span class="n">num_classes</span><span class="o">=</span><span class="n">num_classes</span>
         <span class="p">)</span>
-    <span class="k">elif</span> <span class="n">ARGS</span><span class="o">.</span><span class="n">model_type</span> <span class="o">==</span> <span class="s2">&quot;deep_resnet&quot;</span><span class="p">:</span>
+    <span class="k">elif</span> <span class="n">ARGS</span><span class="o">.</span><span class="n">model_type</span> <span class="o">==</span> <span class="s2">&quot;deep_simple_resnet&quot;</span><span class="p">:</span>
         <span class="n">model</span> <span class="o">=</span> <span class="n">SimpleResNet</span><span class="p">(</span>
             <span class="n">list_num_res_units_per_block</span><span class="o">=</span><span class="p">[</span><span class="mi">6</span><span class="p">,</span> <span class="mi">6</span><span class="p">],</span> <span class="n">num_classes</span><span class="o">=</span><span class="n">num_classes</span>
         <span class="p">)</span>
+    <span class="k">elif</span> <span class="n">ARGS</span><span class="o">.</span><span class="n">model_type</span> <span class="o">==</span> <span class="s2">&quot;complex_resnet&quot;</span><span class="p">:</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">ComplexResNet</span><span class="p">(</span>
+            <span class="n">list_num_res_units_per_block</span><span class="o">=</span><span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span> <span class="n">num_classes</span><span class="o">=</span><span class="n">num_classes</span>
+        <span class="p">)</span>
+    <span class="k">elif</span> <span class="n">ARGS</span><span class="o">.</span><span class="n">model_type</span> <span class="o">==</span> <span class="s2">&quot;complex_resnet_v2&quot;</span><span class="p">:</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">ComplexResNetV2</span><span class="p">(</span>
+            <span class="n">list_num_res_units_per_block</span><span class="o">=</span><span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span> <span class="n">num_classes</span><span class="o">=</span><span class="n">num_classes</span>
+        <span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unidentified option for arg (model_type): </span><span class="si">{</span><span class="n">ARGS</span><span class="o">.</span><span class="n">model_type</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unidentified option for arg (model_type): </span><span class="si">{</span><span class="n">ARGS</span><span class="o">.</span><span class="n">model_type</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
     <span class="n">model</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">ARGS</span><span class="o">.</span><span class="n">optimizer_type</span> <span class="o">==</span> <span class="s2">&quot;sgd&quot;</span><span class="p">:</span>
@@ -281,11 +313,12 @@
             <span class="n">power</span><span class="o">=</span><span class="mf">0.75</span><span class="p">,</span>
         <span class="p">)</span>
 
-    <span class="n">criterion</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">CrossEntropyLoss</span><span class="p">()</span>
+    <span class="n">criterion</span> <span class="o">=</span> <span class="n">CrossEntropyLoss</span><span class="p">()</span>
 
     <span class="n">config</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s2">&quot;dataset&quot;</span><span class="p">:</span> <span class="s2">&quot;Overhead-MNIST&quot;</span><span class="p">,</span>
         <span class="s2">&quot;architecture&quot;</span><span class="p">:</span> <span class="s2">&quot;CNN&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;model_type&quot;</span><span class="p">:</span> <span class="n">ARGS</span><span class="o">.</span><span class="n">model_type</span><span class="p">,</span>
         <span class="s2">&quot;optimizer&quot;</span><span class="p">:</span> <span class="n">ARGS</span><span class="o">.</span><span class="n">optimizer_type</span><span class="p">,</span>
         <span class="s2">&quot;lr_scheduler&quot;</span><span class="p">:</span> <span class="n">ARGS</span><span class="o">.</span><span class="n">lr_scheduler_type</span><span class="p">,</span>
         <span class="s2">&quot;learning_rate&quot;</span><span class="p">:</span> <span class="n">ARGS</span><span class="o">.</span><span class="n">learning_rate</span><span class="p">,</span>
@@ -295,7 +328,7 @@
     <span class="p">}</span>
     <span class="n">best_validation_acc</span> <span class="o">=</span> <span class="mi">0</span>
 
-    <span class="nb">print</span><span class="p">(</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
         <span class="sa">f</span><span class="s2">&quot;Training the Overhead MNIST image classification model started, model_type: </span><span class="si">{</span><span class="n">ARGS</span><span class="o">.</span><span class="n">model_type</span><span class="si">}</span><span class="s2">&quot;</span>
     <span class="p">)</span>
     <span class="k">with</span> <span class="n">wandb</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="n">project</span><span class="o">=</span><span class="s2">&quot;overhead-mnist-model&quot;</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="n">config</span><span class="p">):</span>
@@ -308,11 +341,13 @@
                 <span class="n">model</span><span class="p">,</span> <span class="n">criterion</span><span class="p">,</span> <span class="n">validation_loader</span><span class="p">,</span> <span class="n">device</span>
             <span class="p">)</span>
             <span class="n">time_end</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
-            <span class="nb">print</span><span class="p">(</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s2">&quot;Epoch: </span><span class="si">{</span><span class="n">epoch</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">ARGS</span><span class="o">.</span><span class="n">num_epochs</span><span class="si">}</span><span class="s2">, time: </span><span class="si">{</span><span class="n">time_end</span><span class="o">-</span><span class="n">time_start</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2"> sec.&quot;</span>
             <span class="p">)</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Train Loss: </span><span class="si">{</span><span class="n">train_loss</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">, Train Accuracy: </span><span class="si">{</span><span class="n">train_acc</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="nb">print</span><span class="p">(</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Train Loss: </span><span class="si">{</span><span class="n">train_loss</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">, Train Accuracy: </span><span class="si">{</span><span class="n">train_acc</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s2">&quot;Validation Loss: </span><span class="si">{</span><span class="n">validation_loss</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">, Validation Accuracy: </span><span class="si">{</span><span class="n">validation_acc</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
             <span class="p">)</span>
             <span class="n">wandb</span><span class="o">.</span><span class="n">log</span><span class="p">(</span>
@@ -333,11 +368,11 @@
                 <span class="n">wandb</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dir_model</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ARGS</span><span class="o">.</span><span class="n">model_type</span><span class="si">}</span><span class="s2">.pt&quot;</span><span class="p">))</span>
             <span class="k">if</span> <span class="n">ARGS</span><span class="o">.</span><span class="n">lr_scheduler_type</span> <span class="o">==</span> <span class="s2">&quot;poly&quot;</span><span class="p">:</span>
                 <span class="n">lr_scheduler</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Training the Overhead MNIST image classification model complete!!!!&quot;</span><span class="p">)</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Training the Overhead MNIST image classification model complete!!!!&quot;</span><span class="p">)</span>
     <span class="k">return</span></div>
 
 
-<div class="viewcode-block" id="main"><a class="viewcode-back" href="../../modeling.html#modeling.train.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+<div class="viewcode-block" id="main"><a class="viewcode-back" href="../../modeling.html#modeling.train.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="n">learning_rate</span> <span class="o">=</span> <span class="mf">1e-3</span>
     <span class="n">weight_decay</span> <span class="o">=</span> <span class="mf">5e-6</span>
     <span class="n">batch_size</span> <span class="o">=</span> <span class="mi">64</span>
@@ -345,7 +380,7 @@
     <span class="n">model_type</span> <span class="o">=</span> <span class="s2">&quot;simple_cnn&quot;</span>
     <span class="n">dir_dataset</span> <span class="o">=</span> <span class="s2">&quot;/home/abhishek/Desktop/datasets/overhead_mnist/version2&quot;</span>
     <span class="n">dir_model</span> <span class="o">=</span> <span class="s2">&quot;trained_models&quot;</span>
-    <span class="n">lr_scheduler_type</span> <span class="o">=</span> <span class="s2">&quot;none&quot;</span>
+    <span class="n">lr_scheduler_type</span> <span class="o">=</span> <span class="s2">&quot;poly&quot;</span>
     <span class="n">optimizer_type</span> <span class="o">=</span> <span class="s2">&quot;adam&quot;</span>
 
     <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span>
@@ -392,7 +427,14 @@
         <span class="s2">&quot;--model_type&quot;</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="n">model_type</span><span class="p">,</span>
         <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
-        <span class="n">choices</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;simple_cnn&quot;</span><span class="p">,</span> <span class="s2">&quot;simple_resnet&quot;</span><span class="p">,</span> <span class="s2">&quot;medium_resnet&quot;</span><span class="p">,</span> <span class="s2">&quot;deep_resnet&quot;</span><span class="p">],</span>
+        <span class="n">choices</span><span class="o">=</span><span class="p">[</span>
+            <span class="s2">&quot;simple_cnn&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;simple_resnet&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;medium_simple_resnet&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;deep_simple_resnet&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;complex_resnet&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;complex_resnet_v2&quot;</span><span class="p">,</span>
+        <span class="p">],</span>
         <span class="n">help</span><span class="o">=</span><span class="s2">&quot;model type to be trained&quot;</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>

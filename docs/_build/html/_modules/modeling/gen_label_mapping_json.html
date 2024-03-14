@@ -73,10 +73,12 @@
   <h1>Source code for modeling.gen_label_mapping_json</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">import</span> <span class="nn">argparse</span>
 
 
-<div class="viewcode-block" id="gen_label_mapping_json"><a class="viewcode-back" href="../../modeling.html#modeling.gen_label_mapping_json.gen_label_mapping_json">[docs]</a><span class="k">def</span> <span class="nf">gen_label_mapping_json</span><span class="p">(</span><span class="n">ARGS</span><span class="p">):</span>
+<div class="viewcode-block" id="gen_label_mapping_json"><a class="viewcode-back" href="../../modeling.html#modeling.gen_label_mapping_json.gen_label_mapping_json">[docs]</a><span class="k">def</span> <span class="nf">gen_label_mapping_json</span><span class="p">(</span><span class="n">ARGS</span><span class="p">:</span> <span class="n">argparse</span><span class="o">.</span><span class="n">Namespace</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
     <span class="n">file_json</span> <span class="o">=</span> <span class="s2">&quot;label_mapping.json&quot;</span>
     <span class="n">list_labels</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">ARGS</span><span class="o">.</span><span class="n">dir_train</span><span class="p">))</span>
     <span class="n">num_labels</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">list_labels</span><span class="p">)</span>
@@ -85,11 +87,11 @@
         <span class="n">dict_label_mapping</span><span class="p">[</span><span class="n">lbl_idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">list_labels</span><span class="p">[</span><span class="n">lbl_idx</span><span class="p">]</span>
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_json</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file_des</span><span class="p">:</span>
         <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">dict_label_mapping</span><span class="p">,</span> <span class="n">file_des</span><span class="p">,</span> <span class="n">ensure_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Label mapping is saved to </span><span class="si">{</span><span class="n">file_json</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Label mapping is saved to </span><span class="si">{</span><span class="n">file_json</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
     <span class="k">return</span></div>
 
 
-<div class="viewcode-block" id="main"><a class="viewcode-back" href="../../modeling.html#modeling.gen_label_mapping_json.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+<div class="viewcode-block" id="main"><a class="viewcode-back" href="../../modeling.html#modeling.gen_label_mapping_json.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="n">dir_train</span> <span class="o">=</span> <span class="s2">&quot;/home/abhishek/Desktop/datasets/overhead_mnist/version2/train&quot;</span>
     <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span>
         <span class="n">formatter_class</span><span class="o">=</span><span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentDefaultsHelpFormatter</span>
