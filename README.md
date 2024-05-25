@@ -6,9 +6,11 @@
 * The dataset contains 10 classes
 
 
-## Repo
+## Project info
 * This repo contains an end-to-end deep learning project deployment for overhead image classification
-* Weights and Biases has been used for the MLOps
+* In this project, the recently popular [Kolmogorov-Arnold Networks (KAN)](https://kindxiaoming.github.io/pykan/index.html) is also explored
+* Simple and Complex CNNs using the KAN layer is developed and tested
+* Weights and Biases has been used for MLOps
 * For deployment, an API has been developed and deployed using FastAPI and docker
 * For the training, the dataset is split into 95% - 5% for train and validation sets respectively
 * The python packages are listed in [requirements.txt](requirements.txt)
@@ -58,3 +60,9 @@ docker run -p 7860:7860 -t fastapi_overhead_mnist
 ![Sample test image 8](sample_test_images/76680.jpg?raw=true)
 ![Sample test image 9](sample_test_images/76685.jpg?raw=true)
 ![Sample test image 10](sample_test_images/76686.jpg?raw=true)
+
+
+## References
+* [Kolmogorov-Arnold Networks (KAN) Paper](https://arxiv.org/abs/2404.19756)
+* [Kolmogorov-Arnold Networks (KAN) Github](https://github.com/KindXiaoming/pykan)
+* [Kolmogorov-Arnold Networks (KAN) Docs](https://kindxiaoming.github.io/pykan/index.html)
