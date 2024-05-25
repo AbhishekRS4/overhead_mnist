@@ -16,3 +16,4 @@ streamlit==1.14.0
 wandb
 sphinx==7.1.2
 sphinx-rtd-theme==2.0.0
+pykan==0.0.5

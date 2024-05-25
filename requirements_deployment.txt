@@ -9,3 +9,4 @@ pydantic-settings==2.1.0
 requests==2.31.0
 opencv-python-headless==4.6.0.66
 python-multipart==0.0.9
+pykan==0.0.5
