@@ -1,16 +1,18 @@
-.. Overhead-MNIST documentation master file, created by
-   sphinx-quickstart on Sat Mar  2 19:03:52 2024.
+.. OverHeadMNIST documentation master file, created by
+   sphinx-quickstart on Sat May 25 10:26:37 2024.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to Overhead-MNIST's documentation!
-==========================================
+Welcome to OverHeadMNIST's documentation!
+=========================================
 
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
 
    modules
+
+
 
 Indices and tables
 ==================

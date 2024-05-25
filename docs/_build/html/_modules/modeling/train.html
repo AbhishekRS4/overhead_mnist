@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>modeling.train &mdash; Overhead-MNIST  documentation</title>
+  <title>modeling.train &mdash; OverHeadMNIST  documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
 
@@ -31,7 +31,7 @@
           
           
           <a href="../../index.html" class="icon icon-home">
-            Overhead-MNIST
+            OverHeadMNIST
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -52,7 +52,7 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../../index.html">Overhead-MNIST</a>
+          <a href="../../index.html">OverHeadMNIST</a>
       </nav>
 
       <div class="wy-nav-content">
@@ -88,7 +88,15 @@
 <span class="kn">from</span> <span class="nn">torch.optim.lr_scheduler</span> <span class="kn">import</span> <span class="n">_LRScheduler</span>
 
 <span class="kn">from</span> <span class="nn">dataset</span> <span class="kn">import</span> <span class="n">split_dataset</span><span class="p">,</span> <span class="n">get_dataloaders_for_training</span>
-<span class="kn">from</span> <span class="nn">models</span> <span class="kn">import</span> <span class="n">SimpleCNN</span><span class="p">,</span> <span class="n">SimpleResNet</span><span class="p">,</span> <span class="n">ComplexResNet</span><span class="p">,</span> <span class="n">ComplexResNetV2</span>
+<span class="kn">from</span> <span class="nn">models</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">SimpleCNN</span><span class="p">,</span>
+    <span class="n">SimpleResNet</span><span class="p">,</span>
+    <span class="n">ComplexResNet</span><span class="p">,</span>
+    <span class="n">ComplexResNetV2</span><span class="p">,</span>
+    <span class="n">SimpleResKANet</span><span class="p">,</span>
+    <span class="n">ComplexResKANet</span><span class="p">,</span>
+    <span class="n">ComplexResKANetV2</span><span class="p">,</span>
+<span class="p">)</span>
 
 
 <div class="viewcode-block" id="PolynomialLR"><a class="viewcode-back" href="../../modeling.html#modeling.train.PolynomialLR">[docs]</a><span class="k">class</span> <span class="nc">PolynomialLR</span><span class="p">(</span><span class="n">_LRScheduler</span><span class="p">):</span>
@@ -116,7 +124,15 @@
 
 
 <div class="viewcode-block" id="train"><a class="viewcode-back" href="../../modeling.html#modeling.train.train">[docs]</a><span class="k">def</span> <span class="nf">train</span><span class="p">(</span>
-    <span class="n">model</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">SimpleCNN</span><span class="p">,</span> <span class="n">SimpleResNet</span><span class="p">,</span> <span class="n">ComplexResNet</span><span class="p">,</span> <span class="n">ComplexResNetV2</span><span class="p">],</span>
+    <span class="n">model</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span>
+        <span class="n">SimpleCNN</span><span class="p">,</span>
+        <span class="n">SimpleResNet</span><span class="p">,</span>
+        <span class="n">ComplexResNet</span><span class="p">,</span>
+        <span class="n">ComplexResNetV2</span><span class="p">,</span>
+        <span class="n">SimpleResKANet</span><span class="p">,</span>
+        <span class="n">ComplexResKANet</span><span class="p">,</span>
+        <span class="n">ComplexResKANetV2</span><span class="p">,</span>
+    <span class="p">],</span>
     <span class="n">optimizer</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">SGD</span><span class="p">,</span> <span class="n">AdamW</span><span class="p">],</span>
     <span class="n">criterion</span><span class="p">:</span> <span class="n">CrossEntropyLoss</span><span class="p">,</span>
     <span class="n">train_loader</span><span class="p">:</span> <span class="n">DataLoader</span><span class="p">,</span>
@@ -169,7 +185,15 @@
 
 
 <div class="viewcode-block" id="validate"><a class="viewcode-back" href="../../modeling.html#modeling.train.validate">[docs]</a><span class="k">def</span> <span class="nf">validate</span><span class="p">(</span>
-    <span class="n">model</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">SimpleCNN</span><span class="p">,</span> <span class="n">SimpleResNet</span><span class="p">,</span> <span class="n">ComplexResNet</span><span class="p">,</span> <span class="n">ComplexResNetV2</span><span class="p">],</span>
+    <span class="n">model</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span>
+        <span class="n">SimpleCNN</span><span class="p">,</span>
+        <span class="n">SimpleResNet</span><span class="p">,</span>
+        <span class="n">ComplexResNet</span><span class="p">,</span>
+        <span class="n">ComplexResNetV2</span><span class="p">,</span>
+        <span class="n">SimpleResKANet</span><span class="p">,</span>
+        <span class="n">ComplexResKANet</span><span class="p">,</span>
+        <span class="n">ComplexResKANetV2</span><span class="p">,</span>
+    <span class="p">],</span>
     <span class="n">criterion</span><span class="p">:</span> <span class="n">CrossEntropyLoss</span><span class="p">,</span>
     <span class="n">validation_loader</span><span class="p">:</span> <span class="n">DataLoader</span><span class="p">,</span>
     <span class="n">device</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">,</span>
@@ -288,6 +312,24 @@
         <span class="p">)</span>
     <span class="k">elif</span> <span class="n">ARGS</span><span class="o">.</span><span class="n">model_type</span> <span class="o">==</span> <span class="s2">&quot;complex_resnet_v2&quot;</span><span class="p">:</span>
         <span class="n">model</span> <span class="o">=</span> <span class="n">ComplexResNetV2</span><span class="p">(</span>
+            <span class="n">list_num_res_units_per_block</span><span class="o">=</span><span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span> <span class="n">num_classes</span><span class="o">=</span><span class="n">num_classes</span>
+        <span class="p">)</span>
+    <span class="k">elif</span> <span class="n">ARGS</span><span class="o">.</span><span class="n">model_type</span> <span class="o">==</span> <span class="s2">&quot;simple_reskanet&quot;</span><span class="p">:</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">SimpleResKANet</span><span class="p">(</span><span class="n">num_classes</span><span class="o">=</span><span class="n">num_classes</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">ARGS</span><span class="o">.</span><span class="n">model_type</span> <span class="o">==</span> <span class="s2">&quot;medium_simple_reskanet&quot;</span><span class="p">:</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">SimpleResKANet</span><span class="p">(</span>
+            <span class="n">list_num_res_units_per_block</span><span class="o">=</span><span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span> <span class="n">num_classes</span><span class="o">=</span><span class="n">num_classes</span>
+        <span class="p">)</span>
+    <span class="k">elif</span> <span class="n">ARGS</span><span class="o">.</span><span class="n">model_type</span> <span class="o">==</span> <span class="s2">&quot;deep_simple_reskanet&quot;</span><span class="p">:</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">SimpleResKANet</span><span class="p">(</span>
+            <span class="n">list_num_res_units_per_block</span><span class="o">=</span><span class="p">[</span><span class="mi">6</span><span class="p">,</span> <span class="mi">6</span><span class="p">],</span> <span class="n">num_classes</span><span class="o">=</span><span class="n">num_classes</span>
+        <span class="p">)</span>
+    <span class="k">elif</span> <span class="n">ARGS</span><span class="o">.</span><span class="n">model_type</span> <span class="o">==</span> <span class="s2">&quot;complex_reskanet&quot;</span><span class="p">:</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">ComplexResKANet</span><span class="p">(</span>
+            <span class="n">list_num_res_units_per_block</span><span class="o">=</span><span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span> <span class="n">num_classes</span><span class="o">=</span><span class="n">num_classes</span>
+        <span class="p">)</span>
+    <span class="k">elif</span> <span class="n">ARGS</span><span class="o">.</span><span class="n">model_type</span> <span class="o">==</span> <span class="s2">&quot;complex_reskanet_v2&quot;</span><span class="p">:</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">ComplexResKANetV2</span><span class="p">(</span>
             <span class="n">list_num_res_units_per_block</span><span class="o">=</span><span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span> <span class="n">num_classes</span><span class="o">=</span><span class="n">num_classes</span>
         <span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
@@ -434,6 +476,11 @@
             <span class="s2">&quot;deep_simple_resnet&quot;</span><span class="p">,</span>
             <span class="s2">&quot;complex_resnet&quot;</span><span class="p">,</span>
             <span class="s2">&quot;complex_resnet_v2&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;simple_reskanet&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;medium_simple_reskanet&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;deep_simple_reskanet&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;complex_resnet_kan&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;complex_resnet_kan_v2&quot;</span><span class="p">,</span>
         <span class="p">],</span>
         <span class="n">help</span><span class="o">=</span><span class="s2">&quot;model type to be trained&quot;</span><span class="p">,</span>
     <span class="p">)</span>
