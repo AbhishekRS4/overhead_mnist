@@ -15,7 +15,15 @@ from torch.utils.data import DataLoader
 from torch.optim.lr_scheduler import _LRScheduler
 
 from dataset import split_dataset, get_dataloaders_for_training
-from models import SimpleCNN, SimpleResNet, ComplexResNet, ComplexResNetV2
+from models import (
+    SimpleCNN,
+    SimpleResNet,
+    ComplexResNet,
+    ComplexResNetV2,
+    SimpleResKANet,
+    ComplexResKANet,
+    ComplexResKANetV2,
+)
 
 
 class PolynomialLR(_LRScheduler):
@@ -43,7 +51,15 @@ class PolynomialLR(_LRScheduler):
 
 
 def train(
-    model: Union[SimpleCNN, SimpleResNet, ComplexResNet, ComplexResNetV2],
+    model: Union[
+        SimpleCNN,
+        SimpleResNet,
+        ComplexResNet,
+        ComplexResNetV2,
+        SimpleResKANet,
+        ComplexResKANet,
+        ComplexResKANetV2,
+    ],
     optimizer: Union[SGD, AdamW],
     criterion: CrossEntropyLoss,
     train_loader: DataLoader,
@@ -96,7 +112,15 @@ def train(
 
 
 def validate(
-    model: Union[SimpleCNN, SimpleResNet, ComplexResNet, ComplexResNetV2],
+    model: Union[
+        SimpleCNN,
+        SimpleResNet,
+        ComplexResNet,
+        ComplexResNetV2,
+        SimpleResKANet,
+        ComplexResKANet,
+        ComplexResKANetV2,
+    ],
     criterion: CrossEntropyLoss,
     validation_loader: DataLoader,
     device: torch.device,
@@ -215,6 +239,24 @@ def train_classifier(ARGS: argparse.Namespace) -> None:
         )
     elif ARGS.model_type == "complex_resnet_v2":
         model = ComplexResNetV2(
+            list_num_res_units_per_block=[4, 4, 4], num_classes=num_classes
+        )
+    elif ARGS.model_type == "simple_reskanet":
+        model = SimpleResKANet(num_classes=num_classes)
+    elif ARGS.model_type == "medium_simple_reskanet":
+        model = SimpleResKANet(
+            list_num_res_units_per_block=[4, 4], num_classes=num_classes
+        )
+    elif ARGS.model_type == "deep_simple_reskanet":
+        model = SimpleResKANet(
+            list_num_res_units_per_block=[6, 6], num_classes=num_classes
+        )
+    elif ARGS.model_type == "complex_reskanet":
+        model = ComplexResKANet(
+            list_num_res_units_per_block=[4, 4, 4], num_classes=num_classes
+        )
+    elif ARGS.model_type == "complex_reskanet_v2":
+        model = ComplexResKANetV2(
             list_num_res_units_per_block=[4, 4, 4], num_classes=num_classes
         )
     else:
@@ -361,6 +403,11 @@ def main() -> None:
             "deep_simple_resnet",
             "complex_resnet",
             "complex_resnet_v2",
+            "simple_reskanet",
+            "medium_simple_reskanet",
+            "deep_simple_reskanet",
+            "complex_resnet_kan",
+            "complex_resnet_kan_v2",
         ],
         help="model type to be trained",
     )
