@@ -19,6 +19,13 @@
 * Some sample test images are available in [sample_test_images](sample_test_images)
 
 
+## Training using docker image
+* Use the following command for training using the docker image
+```
+docker run --rm -it --init   --gpus=all   --ipc=host   --user="$(id -u):$(id -g)"   --volume="$PWD:/app"   my_pytorch python3 modeling/train.py --dir_dataset /app/dir_dataset/
+```
+
+
 ## Docker deployment instructions on a local machine
 * For deployment [requirements_deployment.txt](requirements_deployment.txt) needs to be used
 * To build the container, run the following command
