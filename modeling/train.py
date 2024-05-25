@@ -406,8 +406,8 @@ def main() -> None:
             "simple_reskanet",
             "medium_simple_reskanet",
             "deep_simple_reskanet",
-            "complex_resnet_kan",
-            "complex_resnet_kan_v2",
+            "complex_reskanet",
+            "complex_reskanet_v2",
         ],
         help="model type to be trained",
     )
