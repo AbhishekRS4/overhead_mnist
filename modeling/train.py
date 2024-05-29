@@ -103,14 +103,19 @@ def train(
         label = label.to(device, dtype=torch.long)
 
         optimizer.zero_grad()
+        # run forward pass with autocast
         with torch.autocast(device_type="cuda", dtype=torch.float16):
             logits = model(data)
             loss = criterion(logits, label)
             train_running_loss += loss.item()
         pred_label = torch.argmax(logits, dim=1)
         train_running_correct += (pred_label == label).sum().item()
+
+        # loss is scaled and then scaled gradients are created
         scaler.scale(loss).backward()
+        # apply the update
         scaler.step(optimizer)
+        # update the scaler for the next iteration
         scaler.update()
 
     train_loss = train_running_loss / num_train_batches
