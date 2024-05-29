@@ -9,6 +9,7 @@ import torchvision
 import torch.nn.functional as F
 
 from torch.optim import SGD, AdamW
+from torch.cuda.amp import GradScaler
 from typing import Union, List, Tuple
 from torch.nn import CrossEntropyLoss
 from torch.utils.data import DataLoader
@@ -64,6 +65,7 @@ def train(
     criterion: CrossEntropyLoss,
     train_loader: DataLoader,
     device: torch.device,
+    scaler: GradScaler,
 ) -> Tuple[float, float]:
     """
     ---------
@@ -79,6 +81,8 @@ def train(
         an object of type torch dataloader
     device: object
         an object of type torch device
+    scaler: object
+        an object of type GradScaler
 
     -------
     Returns
@@ -88,6 +92,7 @@ def train(
     """
     model.to(device)
     model.train()
+    logits = None
     train_running_loss = 0.0
     train_running_correct = 0
     num_train_samples = len(train_loader.dataset)
@@ -98,13 +103,20 @@ def train(
         label = label.to(device, dtype=torch.long)
 
         optimizer.zero_grad()
-        logits = model(data)
-        loss = criterion(logits, label)
-        train_running_loss += loss.item()
+        # run forward pass with autocast
+        with torch.autocast(device_type="cuda", dtype=torch.float16):
+            logits = model(data)
+            loss = criterion(logits, label)
+            train_running_loss += loss.item()
         pred_label = torch.argmax(logits, dim=1)
         train_running_correct += (pred_label == label).sum().item()
-        loss.backward()
-        optimizer.step()
+
+        # loss is scaled and then scaled gradients are created
+        scaler.scale(loss).backward()
+        # apply the update
+        scaler.step(optimizer)
+        # update the scaler for the next iteration
+        scaler.update()
 
     train_loss = train_running_loss / num_train_batches
     train_acc = 100.0 * train_running_correct / num_train_samples
@@ -283,6 +295,7 @@ def train_classifier(ARGS: argparse.Namespace) -> None:
         )
 
     criterion = CrossEntropyLoss()
+    scaler = GradScaler()
 
     config = {
         "dataset": "Overhead-MNIST",
@@ -304,7 +317,7 @@ def train_classifier(ARGS: argparse.Namespace) -> None:
         for epoch in range(1, ARGS.num_epochs + 1):
             time_start = time.time()
             train_loss, train_acc = train(
-                model, optimizer, criterion, train_loader, device
+                model, optimizer, criterion, train_loader, device, scaler
             )
             validation_loss, validation_acc = validate(
                 model, criterion, validation_loader, device

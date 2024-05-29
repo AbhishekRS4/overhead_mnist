@@ -8,10 +8,12 @@
 
 ## Project info
 * This repo contains an end-to-end deep learning project deployment for overhead image classification
-* In this project, the recently popular [Kolmogorov-Arnold Networks (KAN)](https://kindxiaoming.github.io/pykan/index.html) is also explored
-* Simple and Complex CNNs using the KAN layer is developed and tested
-* Weights and Biases has been used for MLOps
-* For deployment, an API has been developed and deployed using FastAPI and docker
+* The purpose of this project is to try multiple new things. The following new things that have been explored
+  * In this project, the recently popular [Kolmogorov-Arnold Networks (KAN)](https://kindxiaoming.github.io/pykan/index.html) is also explored
+  * Simple and Complex CNNs using the KAN layer is developed and tested
+  * Weights and Biases has been used for MLOps including its new feature of model registry
+  * For training, the Automatic Mixed Precision (AMP) has been explored by using `float16` for some layer weights to speed up training
+  * For deployment, an API has been developed and deployed using FastAPI and docker
 * For the training, the dataset is split into 95% - 5% for train and validation sets respectively
 * The python packages are listed in [requirements.txt](requirements.txt)
 * The docker container can be deployed using [Dockerfile](Dockerfile)
