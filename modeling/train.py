@@ -356,7 +356,7 @@ def train_classifier(ARGS: argparse.Namespace) -> None:
 
 def main() -> None:
     learning_rate = 1e-3
-    weight_decay = 5e-6
+    weight_decay = 5e-5
     batch_size = 64
     num_epochs = 100
     model_type = "simple_cnn"
